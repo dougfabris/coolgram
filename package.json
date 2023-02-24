@@ -1,0 +1,14 @@
+{
+  "name": "coolgram",
+  "version": "1.0.0",
+  "description": "simple instagram clone",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -c-1"
+  },
+  "author": "Douglas Fabris",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
