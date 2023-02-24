@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coolgram</title>
+  <link rel="icon" type="image/x-icon" href="./src/images/icons/cg-icon48x48.png">
+  <link rel="stylesheet" href="./src/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Coolgram</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./help.html">Help</a>
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-background">
+      <h1>Welcome to coolgram</h1>
+    </div>
+
+    <div id="posts" class="m-3">
+      <div class="container">
+        <div class="row">
+          <div id="display-posts">
+
+          </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary fixed-button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Create Post</button>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Post</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="postForm" action='./'>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label">Title</label>
+                <input type="text" class="form-control" id="post-title">
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Description</label>
+                <textarea class="form-control" id="post-description"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="closeButton" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="submitButton">Post!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">Error</strong>
+          <small>11 mins ago</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          You must add a title to the post
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./src/js/bootstrap.min.js"></script>
+  <script src="./src/js/app.js"></script>
+  <script src="./src/js/createPost.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+.main-background {
+  background-image: url('../images/background-2.jpeg');
+  background-position: center center;
+  background-size: cover;
+  height: 450px;
+}
+
+@media(max-width: 720px) {
+  .main-background {
+    height: 250px;
+  }
+}
+
+.fixed-button {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 2.5rem;
+}
