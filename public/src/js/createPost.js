@@ -34,17 +34,60 @@ function createCard (title, description) {
 
 var submitButton = document.getElementById('submitButton');
 var closeButton = document.getElementById('closeButton');
-var toastLiveExample = document.getElementById('liveToast')
+var toastLiveExample = document.getElementById('liveToast');
+
 submitButton.addEventListener('click', function() {
+  // if (deferredPrompt) {
+  //   deferredPrompt.prompt();
+  // }
   if (title.value === '') {
     const toast = new bootstrap.Toast(toastLiveExample)
     closeButton.click();
     return toast.show();
   }
 
-  createCard(title.value, description.value);
+  postData(title.value, description.value);
+
   title.value = '';
   description.value = '';
 
   closeButton.click();
 });
+
+function updateUI() {
+  displayPosts.innerHTML = '';
+
+  fetch('http://localhost:3000/posts')
+    .then(function(res) {
+      return res.json();
+    })
+    .then(function (data) {
+      for (item of data) {
+        createCard(item.title, item.description);
+      }
+    })
+} 
+
+updateUI();
+
+function postData (title, description) {
+  fetch('http://localhost:3000/posts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': "application/json"
+    },
+    body: JSON.stringify({
+      id: Math.random(),
+      title: title,
+      description: description
+    })
+  })
+  .then(function (res) {
+    return res.json()
+  })
+  .then(function(res) {
+    console.log('Sent data', res);
+    updateUI();
+  })
+}  
