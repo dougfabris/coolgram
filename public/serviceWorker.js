@@ -1,12 +1,16 @@
 
+var STATIC_CACHE = 'static-37';
+var DYNAMIC_CACHE = 'dynamic';
+
 self.addEventListener('install', function(event) {
-  // console.log('Service Worker - Installing', event);
+  console.log('Service Worker - Installing', event);
   event.waitUntil(
-    caches.open('static-17').then(function(cache) {
+    caches.open(STATIC_CACHE).then(function(cache) {
       console.log('Precacheamento');
       cache.addAll([
         '/',
         '/index.html',
+        '/offline.html',
         '/src/images/background-2.jpeg',
         '/src/css/bootstrap.min.css',
         '/src/css/style.css',
@@ -19,8 +23,25 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('activate', function(event) {
-  // console.log('Service Worker - Activating', event);
+  console.log('Service Worker - Activating', event);
+
+  event.waitUntil(
+    caches.keys()
+      .then(function (keyList) {
+        var promises = keyList.map(function (key) {
+          if ((key !== STATIC_CACHE) && (key !== DYNAMIC_CACHE)) { 
+            return caches.delete(key);
+          }
+        })
+      
+        return Promise.all(promises);
+      })
+  );
+
+  return self.clients.claim();
 });
+
+
 
 self.addEventListener('fetch', function(event) {
   // console.log('Service Worker - Fetching', event);
@@ -33,14 +54,20 @@ self.addEventListener('fetch', function(event) {
         } else {
           return fetch(event.request)
             .then(function(res) {
-              return caches.open('dynamic')
+              return caches.open(DYNAMIC_CACHE)
                 .then(function(cache) {
                   cache.put(event.request.url, res.clone())
                   return res;
                 })
             })
             .catch(function (err) {
-              cconsole.log(err);
+              console.log(err);
+              return caches.open(STATIC_CACHE)
+                .then(function (cache) {
+                  if (event.request.headers.get('accept').includes('text/html')) {
+                    return cache.match('/offline.html');
+                  }
+                })
             })
         }
     })
