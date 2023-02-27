@@ -4,23 +4,24 @@ importScripts('/src/js/utility.js');
 
 var STATIC_CACHE = 'static-53';
 var DYNAMIC_CACHE = 'dynamic';
+var STATIC_FILES = [
+  '/',
+  '/index.html',
+  '/offline.html',
+  '/src/images/background-2.jpeg',
+  '/src/css/bootstrap.min.css',
+  '/src/css/style.css',
+  '/src/js/app.js',
+  '/src/js/bootstrap.min.js',
+  '/src/js/createPost.js',
+]
 
 self.addEventListener('install', function(event) {
   // console.log('Service Worker - Installing', event);
   event.waitUntil(
     caches.open(STATIC_CACHE).then(function(cache) {
       console.log('Precacheamento');
-      cache.addAll([
-        '/',
-        '/index.html',
-        '/offline.html',
-        '/src/images/background-2.jpeg',
-        '/src/css/bootstrap.min.css',
-        '/src/css/style.css',
-        '/src/js/app.js',
-        '/src/js/bootstrap.min.js',
-        '/src/js/createPost.js',
-      ]);
+      cache.addAll(STATIC_FILES);
     })
   )
 });
@@ -44,7 +45,15 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
-
+function isInArray(string, array) {
+  var cachedPath;
+  if (string.indexOf(self.origin) === 0) {
+    cachedPath = string.substring(self.origin.length);
+  } else {
+    cachedPath = string;
+  }
+  return array.indexOf(cachedPath) > -1;
+}
 
 self.addEventListener('fetch', function(event) {
   // console.log('Service Worker - Fetching', event);
@@ -52,20 +61,25 @@ self.addEventListener('fetch', function(event) {
 
   if (event.request.url.indexOf(URL) > - 1) {
     console.log('é minha URL');
-    event.respondWith(
-      fetch(event.request)
-        .then(function (res) {
-          return res.json();
-        })
-        .then(function (data) {
-          for (var key in data) {
-            console.log(data[key]);
-            writeData('posts', data[key]);
-          }
-
-          return res;
-        })
+    event.respondWith(fetch(event.request)
+      .then(function (res) {
+        var clonedRes = res.clone();
+        clearAllData('posts')
+          .then(function () {
+            return clonedRes.json()
+          })
+          .then(function (data) {
+            for (var key in data) {
+              writeData('posts', data[key])
+            }
+          })
+        return res;
+      })
     )
+  } else if (isInArray(event.request.url, STATIC_FILES)) {
+    event.respondWith(
+      caches.match(event.request)
+    );
   } else {
     event.respondWith(
       caches.match(event.request)
@@ -96,6 +110,4 @@ self.addEventListener('fetch', function(event) {
       })
     )
   }
-
-  
 });
