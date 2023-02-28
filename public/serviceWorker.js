@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-
-var STATIC_CACHE = 'static-53';
+var API_URL = 'http://localhost:3000/posts';
+var STATIC_CACHE = 'static-73';
 var DYNAMIC_CACHE = 'dynamic';
 var STATIC_FILES = [
   '/',
@@ -18,6 +18,7 @@ var STATIC_FILES = [
 
 self.addEventListener('install', function(event) {
   // console.log('Service Worker - Installing', event);
+
   event.waitUntil(
     caches.open(STATIC_CACHE).then(function(cache) {
       console.log('Precacheamento');
@@ -57,16 +58,14 @@ function isInArray(string, array) {
 
 self.addEventListener('fetch', function(event) {
   // console.log('Service Worker - Fetching', event);
-  var URL = 'http://localhost:3000/posts';
-
-  if (event.request.url.indexOf(URL) > - 1) {
-    console.log('é minha URL');
+  
+  if (event.request.url.indexOf(API_URL) > - 1) {
     event.respondWith(fetch(event.request)
       .then(function (res) {
         var clonedRes = res.clone();
         clearAllData('posts')
           .then(function () {
-            return clonedRes.json()
+            return clonedRes.json();
           })
           .then(function (data) {
             for (var key in data) {
@@ -89,8 +88,6 @@ self.addEventListener('fetch', function(event) {
           } else {
             return fetch(event.request)
               .then(function(res) {
-                // console.log(URL);
-                // console.log(event.request);
                 return caches.open(DYNAMIC_CACHE)
                   .then(function(cache) {
                     cache.put(event.request.url, res.clone())
@@ -111,3 +108,44 @@ self.addEventListener('fetch', function(event) {
     )
   }
 });
+
+self.addEventListener('sync', function(event) {
+  console.log('Background Syncing', event);
+
+  if (event.tag === 'sync-new-posts') {
+    console.log('Syncing new post');
+    event.waitUntil(
+      readAllData('sync-posts')
+        .then(function (data) {
+          for (var stPost of data) {
+            fetch(API_URL, {
+              method: 'POST',
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                id: stPost.id,
+                title: stPost.title,
+                description: stPost.description,
+                image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg',
+              })
+            })
+              .then(function(res) {
+                console.log('Data was sent', res);
+                if (res.ok) {
+                  res.json()
+                    .then(function (resData) {
+                      deleteItemFromData('sync-posts', resData.id)
+                    })
+                }
+              })
+              .catch(function(error) {
+                console.log('Error while posting sync', error)
+              })
+          }
+        })
+    )
+  }
+})
