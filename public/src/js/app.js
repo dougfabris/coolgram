@@ -1,17 +1,16 @@
 
-// var deferredPrompt;
+var appInstaller;
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
     .then(function() {
-    console.log('Service Worker Registerd');
-  });
+      console.log('Service Worker Registerd');
+    });
 }
 
-// window.addEventListener('beforeinstallprompt', function(event) {
-//   console.log('beforeinstallprompt fired');
-//   event.preventDefault();
-//   deferredPrompt = event;
-//   return false;
-// })
+window.addEventListener('beforeinstallprompt', function(event) {
+  event.preventDefault();
+  appInstaller = event;
+  return false;
+})
 
