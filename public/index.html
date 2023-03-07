@@ -31,7 +31,7 @@
             </li>
           </ul>
           <form class="d-flex" role="search">
-            <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
+            <button id='notificationButton' type="button" class="btn btn-warning me-2">Enable Notifications</button>
             <button id='installBtn' class="btn btn-outline-success">Install App</button>
           </form>
         </div>
@@ -44,10 +44,9 @@
 
     <div id="posts" class="m-3">
       <div class="container">
-        <div class="row">
-          <div id="display-posts">
+        <div class="row" id="display-posts">
 
-          </div>
+        </div>
       </div>
     </div>
 
@@ -69,6 +68,11 @@
               <div class="mb-3">
                 <label for="message-text" class="col-form-label">Description</label>
                 <textarea class="form-control" id="post-description"></textarea>
+              </div>
+              <button type="button" class="btn btn-danger" id='location-button'>Get Location Permission</button>
+              <div class="mb-3">
+                <label for="recipient-location" class="col-form-label">Location: </label>
+                <input type="text" class="form-control" id="recipient-location">
               </div>
             </form>
           </div>
