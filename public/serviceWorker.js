@@ -148,4 +148,12 @@ self.addEventListener('sync', function(event) {
         })
     )
   }
+});
+
+self.addEventListener('notificationclick', function(event) {
+  var action = event.action;
+
+  if (action === 'confirm') {
+    return location.href = './help.html';
+  }
 })
